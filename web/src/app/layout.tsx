@@ -2,7 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import Providers from "./providers";
-
+export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   title: "Shoply",
   description: "Catalog, giỏ hàng, đơn hàng, admin CRUD",
