@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -13,12 +14,10 @@ export default function SiteHeader() {
 
   const [q, setQ] = useState(qParam);
 
-  // Cập nhật input khi thay đổi query param
   useEffect(() => {
     setQ(qParam);
   }, [qParam]);
 
-  // Điều hướng đến /shop?q=...
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     const keyword = q.trim();
@@ -39,8 +38,10 @@ export default function SiteHeader() {
     <Link
       href={href}
       className={cn(
-        "px-3 py-2 rounded-lg hover:underline",
-        pathname === href && "font-semibold underline"
+        "px-2 py-1 text-sm transition",
+        pathname === href
+          ? "text-white font-semibold border-b border-white"
+          : "text-gray-300 hover:text-white"
       )}
     >
       {children}
@@ -48,23 +49,23 @@ export default function SiteHeader() {
   );
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur border-b">
-      <div className="container mx-auto max-w-6xl px-4 h-14 flex items-center gap-3">
+    <header className="sticky top-0 z-50 bg-black border-b border-gray-800">
+      <div className="container mx-auto max-w-6xl px-4 h-14 flex items-center gap-4 text-white">
         {/* Logo */}
-        <Link href="/" className="font-bold">
+        <Link href="/" className="font-bold text-lg tracking-wide">
           Shoply
         </Link>
 
-        {/* Menu chính */}
-        <nav className="flex gap-2 ml-auto">
-          <Nav href="/shop">Shop</Nav>
+        {/* Menu */}
+        <nav className="flex items-center gap-4 ml-auto">
+          <Nav href="/">Shop</Nav>
           <CartIndicator />
           <Nav href="/admin">Admin</Nav>
           <Nav href="/login">Login</Nav>
           <Nav href="/register">Register</Nav>
         </nav>
 
-        {/* Thanh tìm kiếm */}
+        {/* Search */}
         <form
           onSubmit={handleSearch}
           className="hidden md:flex items-center gap-2 ml-4"
@@ -72,13 +73,13 @@ export default function SiteHeader() {
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder=" Tìm sản phẩm..."
-            className="h-9 px-3 rounded-md border text-sm w-48 focus:outline-none focus:ring focus:ring-gray-300"
+            placeholder="Tìm sản phẩm..."
+            className="h-9 px-3 rounded-md bg-gray-900 border border-gray-700 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-white"
             aria-label="Tìm kiếm sản phẩm"
           />
           <button
             type="submit"
-            className="h-9 px-3 rounded-md border bg-gray-100 hover:bg-gray-200 text-sm transition"
+            className="h-9 px-3 rounded-md bg-white text-black text-sm hover:bg-gray-200 transition"
           >
             Tìm
           </button>

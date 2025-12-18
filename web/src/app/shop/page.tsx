@@ -21,6 +21,7 @@ export default function ShopPage() {
     () => ({ page: pageParam, limit: LIMIT, q: qParam || undefined }),
     [pageParam, qParam]
   );
+
   const { data, isLoading, isError, error } = useProductsQuery(queryArgs);
 
   function setUrl(next: { page?: number; q?: string | null }) {
@@ -39,83 +40,90 @@ export default function ShopPage() {
   }
 
   return (
-    <main className="py-8 px-4 bg-black text-white min-h-screen">
-      {/* ✅ Tiêu đề + thanh tìm kiếm ngang hàng */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <h1 className="text-2xl font-bold">Shop</h1>
-        <div className="mt-4 flex flex-col md:flex-row md:items-center gap-4">
+    <section className="space-y-6">
+      {/* Header + search */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold">Tất cả sản phẩm</h1>
 
         <form
-          className="flex gap-2 mt-3 md:mt-0"
           onSubmit={(e) => {
             e.preventDefault();
             setUrl({ q: qInput });
           }}
+          className="flex gap-2 w-full sm:w-auto"
         >
           <input
             value={qInput}
             onChange={(e) => setQInput(e.target.value)}
-            placeholder="🔍 Tìm sản phẩm..."
-            className="h-10 px-3 rounded-md border border-gray-600 bg-transparent text-sm text-white placeholder-gray-400 w-full md:w-72 focus:outline-none focus:border-white"
-            aria-label="Tìm kiếm sản phẩm"
+            placeholder="Tìm sản phẩm…"
+            className="h-10 w-full sm:w-64 rounded-md border px-3 text-sm focus:outline-none focus:ring-1 focus:ring-black"
           />
           <button
             type="submit"
-            className="h-10 px-4 rounded-md border border-gray-600 hover:bg-gray-700 text-sm transition"
+            className="h-10 px-4 rounded-md bg-black text-white text-sm"
           >
             Tìm
           </button>
         </form>
-                </div>
       </div>
 
-      {/* ✅ Trạng thái loading / error */}
+      {/* Loading */}
       {isLoading && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
           {Array.from({ length: LIMIT }).map((_, i) => (
-            <div key={i} className="h-60 bg-gray-800 rounded-xl border border-gray-700" />
+            <div
+              key={i}
+              className="h-64 rounded-xl border bg-gray-100"
+            />
           ))}
         </div>
       )}
 
+      {/* Error */}
       {isError && (
-        <p className="text-red-400 mt-6">
+        <p className="text-red-500">
           Lỗi tải dữ liệu: {(error as Error)?.message}
         </p>
       )}
 
+      {/* Empty */}
       {data && data.data.length === 0 && (
-        <p className="mt-6 text-gray-400">Không tìm thấy sản phẩm phù hợp.</p>
+        <p className="text-gray-500">Không tìm thấy sản phẩm phù hợp.</p>
       )}
 
+      {/* Products */}
       {data && data.data.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {data.data.map((p) => (
             <ProductCard key={p._id} product={p} />
           ))}
         </div>
       )}
 
-      {/* ✅ Phân trang */}
+      {/* Pagination */}
       {data && (
-        <div className="mt-8 flex items-center gap-3">
+        <div className="flex items-center justify-center gap-4 pt-6">
           <button
-            className="h-9 px-3 rounded-md border border-gray-600 hover:bg-gray-700 disabled:opacity-40"
+            className="h-9 px-4 rounded-md border text-sm disabled:opacity-40"
             onClick={() => setUrl({ page: Math.max(pageParam - 1, 1) })}
             disabled={pageParam <= 1}
           >
-            ← Prev
+            ← Trước
           </button>
-          <span className="text-sm text-gray-400">Trang {data.page}</span>
+
+          <span className="text-sm text-gray-600">
+            Trang {data.page}
+          </span>
+
           <button
-            className="h-9 px-3 rounded-md border border-gray-600 hover:bg-gray-700 disabled:opacity-40"
+            className="h-9 px-4 rounded-md border text-sm disabled:opacity-40"
             onClick={() => setUrl({ page: data.page + 1 })}
             disabled={!data.hasNext}
           >
-            Next →
+            Sau →
           </button>
         </div>
       )}
-    </main>
+    </section>
   );
 }
